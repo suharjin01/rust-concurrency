@@ -48,4 +48,26 @@ mod tests {
 
         println!("Application finish");
     }
+
+    // Sequential
+    fn calculate() -> i32 {
+        let mut counter = 0;
+            for i in 0..=5 {
+                println!("Counter : {}", i);
+                thread::sleep(Duration::from_secs(1));
+                counter += 1;
+            }
+
+            return counter;
+    }
+
+    #[test]
+    fn test_sequential() {
+        let result1 = calculate();
+        let result2 = calculate();
+
+        println!("Total counter 1 : {}", result1);
+        println!("Total counter 2 : {}", result2);
+        println!("Application finish!");
+    }
 }
