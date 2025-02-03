@@ -70,4 +70,26 @@ mod tests {
         println!("Total counter 2 : {}", result2);
         println!("Application finish!");
     }
+
+    // Parallel
+    #[test]
+    fn test_parallel() {
+        let handle1 = thread::spawn(|| calculate());
+        let handle2 = thread::spawn(|| calculate());
+
+        let result1 = handle1.join();
+        let result2 = handle2.join();
+
+        match result1 {
+            Ok(counter) => {println!("Total Counter 1 : {}", counter)}
+            Err(error) => {println!("Error : {:?}", error)}
+        }
+
+        match result2 {
+            Ok(counter) => {println!("Total Counter 2 : {}", counter)}
+            Err(error) => {println!("Error : {:?}", error)}
+        }
+
+        println!("Application Finish!");
+    }
 }
