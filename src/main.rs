@@ -6,9 +6,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
 
-    use std::thread;
+    use std::{result, thread};
     use std::time::Duration;
+    use std::thread::JoinHandle;
 
+    // Thread
     #[test]
     fn test_create_thread() {
         thread::spawn(|| {
@@ -20,5 +22,30 @@ mod tests {
 
         println!("Application finish");
         thread::sleep(Duration::from_secs(7));
+    }
+
+    // Join Thread
+    #[test]
+    fn test_join_thread() {
+        let handle = thread::spawn(|| {
+            let mut counter = 0;
+            for i in 0..=5 {
+                println!("Counter : {}", i);
+                thread::sleep(Duration::from_secs(1));
+                counter += 1;
+            }
+
+            return counter;
+        });
+
+        println!("Waiting Handle");
+
+        let result = handle.join();
+        match result {
+            Ok(counter) => println!("Total counter : {} ", counter),
+            Err(error) => println!("Error : {:?}", error)
+        }
+
+        println!("Application finish");
     }
 }
