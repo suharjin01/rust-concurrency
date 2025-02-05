@@ -92,4 +92,17 @@ mod tests {
 
         println!("Application Finish!");
     }
+
+    // Move Keyword
+    #[test]
+    fn test_closure() {
+        let name = String::from("Aqil");
+        let closure = || {
+            thread::sleep(Duration::from_secs(2));
+            println!("Hello {}", name);
+        };
+
+        closure();
+    }
+
 }
