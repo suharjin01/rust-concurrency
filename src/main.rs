@@ -6,7 +6,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
 
-    use std::{result, thread};
+    use std::thread;
     use std::time::Duration;
     use std::thread::JoinHandle;
 
@@ -97,12 +97,14 @@ mod tests {
     #[test]
     fn test_closure() {
         let name = String::from("Aqil");
-        let closure = || {
+        let closure = move || {
             thread::sleep(Duration::from_secs(2));
             println!("Hello {}", name);
         };
 
-        closure();
+        //closure();
+        let handle = thread::spawn(closure);
+        handle.join().unwrap();
     }
 
 }
