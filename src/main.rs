@@ -64,7 +64,7 @@ mod tests {
                 None => {println!("{:?} : Counter : {}", current_thread.id(), i);}
                 Some(name) => {println!("{:?} : Counter : {}", name, i);}
             }
-            
+
             //println!("Counter : {}", i);
             thread::sleep(Duration::from_secs(1));
             counter += 1;
@@ -122,6 +122,18 @@ mod tests {
         //closure();
         let handle = thread::spawn(closure);
         handle.join().unwrap();
+    }
+
+
+    // Thread Factory
+    #[test]
+    fn test_thread_factory() {
+        let factory = thread::Builder::new().name("My Thread".to_string());
+
+        let handle = factory.spawn(calculate).expect("Failed to cread a new thread");
+        let total = handle.join().unwrap();
+
+        println!("Total Counter : {}", total);
     }
 
 }
