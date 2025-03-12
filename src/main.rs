@@ -1,5 +1,10 @@
+use std::thread;
+
+
+// Current Thread di fungsi main
 fn main() {
-    println!("Hello, world!");
+    let current_thread = thread::current();
+    println!("{} : Hello, world!", current_thread.name().unwrap());
 }
 
 // Membuat Thread
@@ -52,13 +57,20 @@ mod tests {
     // Sequential
     fn calculate() -> i32 {
         let mut counter = 0;
-            for i in 0..=5 {
-                println!("Counter : {}", i);
-                thread::sleep(Duration::from_secs(1));
-                counter += 1;
+        // current thread di fungsi calculate untuk mengetahui thread pada fungsi calculate berjalan di unit test mana saja
+        let current_thread = thread::current();
+        for i in 0..=5 {
+            match current_thread.name() {
+                None => {println!("{:?} : Counter : {}", current_thread.id(), i);}
+                Some(name) => {println!("{:?} : Counter : {}", name, i);}
             }
+            
+            //println!("Counter : {}", i);
+            thread::sleep(Duration::from_secs(1));
+            counter += 1;
+        }
 
-            return counter;
+        return counter;
     }
 
     #[test]
@@ -96,6 +108,11 @@ mod tests {
     // Move Keyword
     #[test]
     fn test_closure() {
+        // current thread di fungsi unit test "test_closure" 
+        let current_thread = thread::current();
+        // cetak nama thread
+        println!("{} : Ini adalah nama Thread", current_thread.name().unwrap());
+
         let name = String::from("Aqil");
         let closure = move || {
             thread::sleep(Duration::from_secs(2));
