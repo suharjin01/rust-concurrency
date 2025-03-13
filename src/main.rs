@@ -206,4 +206,36 @@ mod tests {
         let _ = handle2.join();
     }
 
+
+    // Channel life Cycle
+    #[test]
+    fn test_channel_multi_sender() {
+        let (sender, receiver) = std::sync::mpsc::channel::<String>();
+        let sender2 = sender.clone();
+
+        let handle3 = thread::spawn(move || {
+            for i in 0..5 { 
+                thread::sleep(Duration::from_secs(1));
+                sender2.send("Hello from sender 2".to_string());
+            }
+        });
+
+        let handle1 = thread::spawn(move || {
+            for i in 0..5 { 
+                thread::sleep(Duration::from_secs(2));
+                sender.send("Hello from sender 1".to_string());
+            }
+        });
+
+        let handle2 = thread::spawn(move || {
+            for value in receiver.iter() {
+                println!("{}", value);
+            }
+        }); 
+
+        let _ = handle1.join();
+        let _ = handle2.join();
+        let _ = handle3.join();
+    }
+
 }
