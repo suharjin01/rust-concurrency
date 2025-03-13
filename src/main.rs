@@ -136,4 +136,24 @@ mod tests {
         println!("Total Counter : {}", total);
     }
 
+
+    // Channel
+    #[test]
+    fn test_channel() {
+        let (sender, receiver) = std::sync::mpsc::channel::<String>();
+
+        let handle1 = thread::spawn(move || {
+            thread::sleep(Duration::from_secs(2));
+            sender.send("Hello from thread".to_string());
+        });
+
+        let handle2 = thread::spawn(move || {
+            let message = receiver.recv().unwrap();
+            println!("{}", message)
+        }); 
+
+        let _ = handle1.join();
+        let _ = handle2.join();
+    }
+
 }
