@@ -183,4 +183,27 @@ mod tests {
         let _ = handle2.join();
     }
 
+
+    // Channel life Cycle
+    #[test]
+    fn test_channel_iterator() {
+        let (sender, receiver) = std::sync::mpsc::channel::<String>();
+
+        let handle1 = thread::spawn(move || {
+            for i in 0..5 { 
+                thread::sleep(Duration::from_secs(2));
+                sender.send("Hello from thread".to_string());
+            }
+        });
+
+        let handle2 = thread::spawn(move || {
+            for value in receiver.iter() {
+                println!("{}", value);
+            }
+        }); 
+
+        let _ = handle1.join();
+        let _ = handle2.join();
+    }
+
 }
