@@ -11,6 +11,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
 
+    use std::sync::Arc;
     use std::thread;
     use std::time::Duration;
     use std::thread::JoinHandle;
@@ -277,6 +278,33 @@ mod tests {
             let handle = thread::spawn(|| {
                 for _ in 0..1000000 {
                     counter.fetch_add(1, Ordering::Relaxed);
+                }
+            });
+
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        println!("Counter : {}", counter.load(Ordering::Relaxed));
+    }
+
+
+    // Atomic Reference
+    #[test]
+    fn test_atomic_reference() {
+        use std::sync::atomic::{AtomicI32, Ordering};
+
+        let counter: Arc<AtomicI32> = Arc::new(AtomicI32::new(0));
+
+        let mut handles = vec![];
+        for i in 0..10 {
+            let counter_clone = Arc::clone(&counter);
+            let handle = thread::spawn(move || {
+                for _ in 0..1000000 {
+                    counter_clone.fetch_add(1, Ordering::Relaxed);
                 }
             });
 
