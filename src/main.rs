@@ -11,6 +11,8 @@ fn main() {
 #[cfg(test)]
 mod tests {
 
+    use std::borrow::BorrowMut;
+    use std::cell::RefCell;
     use std::sync::Arc;
     use std::thread;
     use std::time::Duration;
@@ -344,6 +346,31 @@ mod tests {
         }
 
         println!("Counter : {}", *counter.lock().unwrap());
+    }
+
+
+    // Thread Local
+    thread_local! {
+        pub static NAME: RefCell<String> = RefCell::new("Default".to_string())
+    }
+
+    #[test]
+    fn test_thread_local() {
+        let handle = thread::spawn(|| {
+            NAME.with_borrow_mut(|name| {
+                *name = "Aqil".to_string();
+            });
+
+            NAME.with_borrow(|name| {
+                println!("Hello : {}", name);
+            });
+        });
+
+        handle.join().unwrap();
+
+        NAME.with_borrow(|name| {
+            println!("Hello : {}", name);
+        });
     }
 
 }
