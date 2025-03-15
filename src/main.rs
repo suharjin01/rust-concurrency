@@ -13,7 +13,7 @@ mod tests {
 
     use std::borrow::BorrowMut;
     use std::cell::RefCell;
-    use std::sync::Arc;
+    use std::sync::{Arc, Barrier};
     use std::thread;
     use std::time::Duration;
     use std::thread::JoinHandle;
@@ -387,6 +387,29 @@ mod tests {
         }
 
         println!("Application Finish")
+    }
+
+
+    // Barrier
+    #[test]
+    fn test_barrier() {
+        let barrier = Arc::new(Barrier::new(10));
+        let mut handles = vec![];
+
+        for i in 0..10 {
+            let barrier_clone = Arc::clone(&barrier);
+            let handle = thread::spawn(move || {
+                println!("Join Game-{}", i);
+                barrier_clone.wait();
+                println!("Gamer-{} start!", i);
+            });
+
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
     }
 
 }
