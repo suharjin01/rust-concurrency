@@ -373,4 +373,20 @@ mod tests {
         });
     }
 
+
+    // Thread Panic
+    #[test]
+    fn test_thread_panic() {
+        let handle = thread::spawn(|| {
+            panic!("Ooos, something went wrong");
+        });
+
+        match handle.join() {
+            Ok(_) => println!("Thread Finish"),
+            Err(_) => println!("Thread Panic")
+        }
+
+        println!("Application Finish")
+    }
+
 }
