@@ -19,6 +19,8 @@ mod tests {
     use std::time::Duration;
     use std::thread::JoinHandle;
 
+    use tokio::runtime::{self, Runtime};
+
     // Thread
     #[test]
     fn test_create_thread() {
@@ -487,6 +489,37 @@ mod tests {
             let data = handle.await.unwrap();
             println!("response : {}", data);
         }
+    }
+
+
+    // Task Runtime / gabungan antara paralel dan juga concurrency
+    async fn run_concurrent(runtime: Arc<Runtime>) {
+        let mut handles = vec![];
+
+        for i in 0..10 {
+            let handle = runtime.spawn(get_database_data(i));
+
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            let data = handle.await.unwrap();
+            println!("response : {}", data);
+        }
+    }
+
+    #[test]
+    fn test_runtime() {
+        let runtime = Arc::new(
+            tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(10)
+                .enable_time()
+                .build()
+                .unwrap()
+        );
+
+        // menjalankan async function di dalam runtime
+        runtime.block_on(run_concurrent(Arc::clone(&runtime)));
     }
 
 }
