@@ -447,4 +447,21 @@ mod tests {
         }
     }
 
+
+    // Async Await implementasi dari Future
+    // untuk memanggil async dibutuh library tokio
+    async fn get_async_data() -> String {
+        thread::sleep(Duration::from_secs(2));
+        println!("Hello From Async");
+        return "Hello from Async".to_string();
+    }
+
+    #[tokio::test]
+    async fn test_async() {
+        let function = get_async_data();
+        println!("Finish Call Async");
+        let data = function.await;
+        println!("{}", data);
+        }
+
 }
