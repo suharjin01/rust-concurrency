@@ -462,6 +462,31 @@ mod tests {
         println!("Finish Call Async");
         let data = function.await;
         println!("{}", data);
+    }
+
+
+    // "Task" implimentasi untuk Concurrency
+    async fn get_database_data(wait: u64) -> String {
+        println!("{:?} get_database_data", thread::current().id());
+        tokio::time::sleep(Duration::from_secs(wait)).await;
+        println!("{:?} hello_from_database", thread::current().id());
+        return "Hello From Database".to_string();
+    }
+
+    #[tokio::test]
+    async fn test_concurrent() {
+        let mut handles = vec![];
+
+        for i in 0..10 {
+            let handle = tokio::spawn(get_database_data(i));
+
+            handles.push(handle);
         }
+
+        for handle in handles {
+            let data = handle.await.unwrap();
+            println!("response : {}", data);
+        }
+    }
 
 }
